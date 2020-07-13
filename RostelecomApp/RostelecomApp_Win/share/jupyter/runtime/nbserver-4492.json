@@ -1,0 +1,11 @@
+{
+  "base_url": "/",
+  "hostname": "localhost",
+  "notebook_dir": "E:\\Documents\\\u041f\u0440\u043e\u0433\u0440\u0430\u043c\u043c\u0438\u0440\u043e\u0432\u0430\u043d\u0438\u0435\\JupiterNotebooks",
+  "password": false,
+  "pid": 4492,
+  "port": 8889,
+  "secure": false,
+  "token": "b0b213e86953e41929f6337f3fa1981e2be86ad2dc4fa289",
+  "url": "http://localhost:8889/"
+}
