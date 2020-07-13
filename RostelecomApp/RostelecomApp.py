@@ -9,6 +9,7 @@ from kivy.uix.screenmanager import ScreenManager, Screen, FadeTransition
 from kivy.uix.textinput import TextInput
 from kivy.uix.boxlayout import BoxLayout
 import pandas as pd
+from random import randint
 
 Builder.load_string("""
 #:import SlideTransition kivy.uix.screenmanager.FadeTransition
@@ -53,6 +54,12 @@ Builder.load_string("""
             pos_hint: {'x':.25, 'y':.35} 
             on_press:
                 app.user_id = root.log_in(app.users, app.user_id)
+        Button:
+            text: "Регистрация"
+            size_hint: (.4, .08)
+            pos_hint: {'x':.25, 'y':.26} 
+            on_press:
+                root.sign_up(app.users)
         Button:
             text: ""
             size_hint: (.05, .05)
@@ -119,6 +126,7 @@ class LoginScreen(Screen):
         """
         self.ids.login_input.text = ''
         self.ids.password_input.text = ''
+        self.ids.info_label.text = ''
 
     def show_pass(self):
         """
@@ -142,7 +150,6 @@ class LoginScreen(Screen):
             temp_passw = users[users.user == self.ids.login_input.text]['pass'].tolist()[0]
             if temp_passw == self.ids.password_input.text:
                 self.manager.current = 'main'
-                print(users[users.user == self.ids.login_input.text]['id'].tolist()[0])
                 return users[users.user == self.ids.login_input.text]['id'].tolist()[0]
             else:
                 self.ids.info_label.text = '[color=#DD1B07]Неверный пароль[/color]'
@@ -150,6 +157,28 @@ class LoginScreen(Screen):
             self.ids.info_label.text = '[color=#DD1B07]Неверный пароль[/color]'
         except IndexError:
             self.ids.info_label.text = '[color=#DD1B07]Пользователь не найден[/color]'
+
+    def sign_up(self, users):
+            """
+            Добавление пользователя в бд users.
+            :return: None
+            """
+            try:
+                users[users.user == self.ids.login_input.text]['pass'].tolist()[0]
+            except IndexError:
+                if len(self.ids.login_input.text) < 4 or len(self.ids.password_input.text) < 4:
+                    self.ids.info_label.text = '[color=#DD1B07]Имя пользователя и пароль должны состоять из 4 и более ' \
+                                               'символов[/color] '
+                else:
+                    self.last_index = users.count()[0]
+                    self.id = str(randint(10000000, 99999999))
+                    while len(users[users.id == self.id]) != 0:
+                        self.id = str(randint(10000000, 99999999))
+                    users.loc[self.last_index] = {'user': self.ids.login_input.text, 'pass': self.ids.password_input.text, 'id': self.id}
+                    self.ids.info_label.text = '[color=#DD1B07]Вы зарегистрированы. Нажмите "Войти"[/color]'
+                    users.to_csv('.data\\users.csv', sep=';')
+            else:
+                self.ids.info_label.text = '[color=#DD1B07]Пользователь с таким именем уже зарегистрирован[/color]'
 
 class PassesScreen(Screen):
     def enter_screen(self, user_id):
